@@ -39,16 +39,7 @@ class User < ApplicationRecord
   def forget
     update_attribute(:remember_digest, nil)
   end
-  
-  def downcase_email
-    self.email.downcase!
-  end
-  
-  def create_activation_digest
-    self.activation_token = User.new_token
-    self.activation_digest = User.digest(activation_token)
-  end
-  
+
   def activate
     update_columns(activated: true, activated_at: Time.zone.now)
   end
@@ -56,4 +47,15 @@ class User < ApplicationRecord
   def send_activation_email
     UserMailer.account_activation(self).deliver_now
   end
+  
+  private
+  
+    def downcase_email
+      self.email.downcase!
+    end  
+    
+    def create_activation_digest
+      self.activation_token = User.new_token
+      self.activation_digest = User.digest(activation_token)
+    end
 end
